@@ -57,7 +57,12 @@ export default function BlogSlider() {
     const fetchPosts = async () => {
       try {
         const blogPosts = await getBlogPosts();
-        setPosts(blogPosts);
+        // Sort posts by published date in descending order (newest first)
+        const sortedPosts = blogPosts.sort((a, b) => 
+          new Date(b.published).getTime() - new Date(a.published).getTime()
+        );
+        // Take only the first 5 posts
+        setPosts(sortedPosts.slice(0, 5));
       } catch (error) {
         console.error('Error fetching posts:', error);
       } finally {

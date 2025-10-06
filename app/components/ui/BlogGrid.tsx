@@ -10,6 +10,7 @@ import Image from 'next/image';
 export default function BlogGrid() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Function to extract the first image from blog content
   const extractFirstImage = (content: string) => {
@@ -62,10 +63,13 @@ export default function BlogGrid() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const blogPosts = await getBlogPosts();
         setPosts(blogPosts);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
+      } catch (err) {
+        console.error('Error fetching posts:', err);
+        setError('Failed to load blog posts. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -81,6 +85,16 @@ export default function BlogGrid() {
           {[...Array(6)].map((_, index) => (
             <div key={index} className="h-80 bg-gray-200 dark:bg-gray-800 animate-pulse rounded-xl"></div>
           ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 text-red-700 dark:text-red-300 px-4 py-3 rounded max-w-md mx-auto">
+          <p>{error}</p>
         </div>
       </div>
     );
